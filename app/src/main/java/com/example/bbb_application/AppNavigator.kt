@@ -101,7 +101,7 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("login") { LoginPage(navController, loginViewModel = loginViewModel) }
         composable("main") { MainPage(navController, loginViewModel = loginViewModel) }
         composable("calendar") { CalendarPage(navController) }
-        composable("team") { TeamPage(navController) }
+        composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }
         composable("task") { TaskPage(navController) }
         composable("settings") { SettingsPage(navController)}
         composable("details/{date}") { backStackEntry ->
