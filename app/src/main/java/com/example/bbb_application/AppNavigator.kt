@@ -27,6 +27,7 @@ import com.example.bbb_application.SettingsPage
 import com.example.bbb_application.TaskPage
 import com.example.bbb_application.TeamPage
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bbb_application.SignUpPage
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -99,6 +100,7 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         modifier = modifier
     ) {
         composable("login") { LoginPage(navController, loginViewModel = loginViewModel) }
+        composable("signup") { SignUpPage(navController) }
         composable("main") { MainPage(navController, loginViewModel = loginViewModel) }
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }

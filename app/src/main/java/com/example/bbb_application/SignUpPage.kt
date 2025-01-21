@@ -12,12 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) {
+fun SignUpPage(navController: NavHostController) {
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
+    var confirmPassword by remember { mutableStateOf(TextFieldValue("")) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-
-    val loggedInUser by loginViewModel.loggedInUser // ViewModel에서 로그인 상태를 가져옴
 
     Column(
         modifier = Modifier
@@ -26,7 +25,7 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Login", style = MaterialTheme.typography.headlineMedium)
+        Text("Sign Up", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -49,6 +48,17 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
             visualTransformation = PasswordVisualTransformation()
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Confirm Password Field
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirm Password") },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation()
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Error Message
@@ -61,34 +71,30 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Login Button
+        // Sign Up Button
         Button(
             onClick = {
-                loginViewModel.login(username.text, password.text) // ViewModel에 로그인 요청
-                if (loggedInUser == null) {
-                    errorMessage = "Invalid username or password. Try again."
-                }
-                else{
-                    navController.navigate("main") // Navigate to main page
+                if (password.text != confirmPassword.text) {
+                    errorMessage = "Passwords do not match"
+                } else {
+                    navController.navigate("login") // 회원가입 후 로그인 페이지로 이동
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Login")
+            Text("Sign Up")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Sign Up Button
+        // 이미 계정이 있다면 로그인 페이지로 이동
         TextButton(
             onClick = {
-                navController.navigate("signup") // 회원가입 페이지로 이동
+                navController.navigate("login") // 로그인 페이지로 이동
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Don't have an account? Sign Up", style = MaterialTheme.typography.bodyMedium)
+            Text("Already have an account? Log In", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
-
-
