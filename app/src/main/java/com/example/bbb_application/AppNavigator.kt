@@ -25,6 +25,7 @@ import com.example.bbb_application.MainPage
 import com.example.bbb_application.SettingsPage
 import com.example.bbb_application.TaskPage
 import com.example.bbb_application.TeamPage
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -89,27 +90,18 @@ fun BottomNavigationBar(navController: NavHostController) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier) {
+    val loginViewModel: LoginViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = "login",
         modifier = modifier
     ) {
-        composable("login") { LoginPage(navController) }
-        composable("main") { MainPage(navController) }
+        composable("login") { LoginPage(navController, loginViewModel = loginViewModel) }
+        composable("main") { MainPage(navController, loginViewModel = loginViewModel) }
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController) }
         composable("task") { TaskPage(navController) }
         composable("settings") { SettingsPage(navController) }
     }
 }
-
-
-
-
-
-
-
-
-
-
 

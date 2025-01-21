@@ -1,5 +1,6 @@
 package com.example.bbb_application
 
+import LoginViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,10 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
 @Composable
-fun LoginPage(navController: NavHostController) {
+fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) {
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    val loggedInUser by loginViewModel.loggedInUser // ViewModel에서 로그인 상태를 가져옴
 
     Column(
         modifier = Modifier
@@ -61,11 +64,12 @@ fun LoginPage(navController: NavHostController) {
         // Login Button
         Button(
             onClick = {
-                if (username.text == "test" && password.text == "1234") {
-                    errorMessage = null // Clear error message
-                    navController.navigate("main") // Navigate to main page
-                } else {
+                loginViewModel.login(username.text, password.text) // ViewModel에 로그인 요청
+                if (loggedInUser == null) {
                     errorMessage = "Invalid username or password. Try again."
+                }
+                else{
+                    navController.navigate("main") // Navigate to main page
                 }
             },
             modifier = Modifier.fillMaxWidth()

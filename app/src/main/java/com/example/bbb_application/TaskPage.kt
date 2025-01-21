@@ -13,6 +13,7 @@ fun TaskPage(navController: NavHostController) {
         topBar = { TopAppBar(title = { Text("Task Management") }) },
         content = {
             Text("Task Page", style = MaterialTheme.typography.headlineMedium)
+            Text("")
         }
     )
 }

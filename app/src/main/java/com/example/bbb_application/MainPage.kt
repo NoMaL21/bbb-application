@@ -1,38 +1,23 @@
 package com.example.bbb_application
 
+import LoginViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainPage(navController: NavHostController) {
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text("Main Page") })
-        },
-        content = { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Welcome to Main Page!", style = MaterialTheme.typography.headlineMedium)
+fun MainPage(navController: NavHostController, loginViewModel: LoginViewModel) {
+    val loggedInUser by loginViewModel.loggedInUser // 로그인 상태 가져오기
 
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    // Button to navigate to CalendarPage
-                    Button(onClick = { navController.navigate("calendar") }) {
-                        Text("Go to Calendar")
-                    }
-                }
-            }
-        }
-    )
+    if (loggedInUser != null) {
+        // 로그인한 유저 이름을 표시
+        Text(text = "Welcome, $loggedInUser!")
+    } else {
+        Text(text = "Please login first.")
+    }
 }
