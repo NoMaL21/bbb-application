@@ -1,6 +1,7 @@
 package com.example.bbb_application
 
 import AppNavigator
+import AppScreen
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,8 +19,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController = rememberNavController()
-            AppNavigator(navController = navController)
+            AppScreen()
         }
     }
 }
