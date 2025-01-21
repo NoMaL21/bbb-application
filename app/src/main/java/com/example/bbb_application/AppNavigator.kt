@@ -1,3 +1,4 @@
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -87,6 +88,7 @@ fun BottomNavigationBar(navController: NavHostController) {
     }
 }
 
+@SuppressLint("ComposableDestinationInComposeScope")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -101,7 +103,11 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController) }
         composable("task") { TaskPage(navController) }
-        composable("settings") { SettingsPage(navController) }
+        composable("settings") { SettingsPage(navController)}
+        composable("details/{date}") { backStackEntry ->
+            val date = backStackEntry.arguments?.getString("date")
+            DetailsPage(date = date)
+        }
     }
 }
 

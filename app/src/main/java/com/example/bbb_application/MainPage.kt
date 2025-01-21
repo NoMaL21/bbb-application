@@ -14,10 +14,19 @@ import androidx.navigation.NavHostController
 fun MainPage(navController: NavHostController, loginViewModel: LoginViewModel) {
     val loggedInUser by loginViewModel.loggedInUser // 로그인 상태 가져오기
 
-    if (loggedInUser != null) {
-        // 로그인한 유저 이름을 표시
-        Text(text = "Welcome, $loggedInUser!")
-    } else {
-        Text(text = "Please login first.")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .wrapContentSize(Alignment.Center), // 중앙 정렬
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // 로그인한 유저 이름을 강조
+        Text(
+            text = "Welcome, $loggedInUser!",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }
