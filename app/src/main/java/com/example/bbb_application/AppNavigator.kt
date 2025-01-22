@@ -38,7 +38,7 @@ fun AppScreen() {
     // NavController의 상태 변화 감지
     LaunchedEffect(navController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            showBottomBar = destination.route != "login" // 로그인 페이지가 아니면 표시
+            showBottomBar = destination.route !in listOf("login", "signup") // 로그인 페이지가 아니면 표시
         }
     }
 
