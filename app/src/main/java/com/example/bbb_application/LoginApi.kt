@@ -6,10 +6,10 @@ import retrofit2.http.POST
 data class LoginRequest(val username: String, val password: String)
 
 // 로그인 응답 데이터 모델
-data class LoginResponse(val token: String, val userId: String)
+data class LoginResponse(val message: String? = null, val error: String? = null)
 
 // API 인터페이스
 interface LoginApi {
-    @POST("login") // 로그인 API의 엔드포인트
+    @POST("login/") // 로그인 API의 엔드포인트
     fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 }

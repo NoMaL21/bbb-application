@@ -42,24 +42,22 @@ object ApiService {
     val loginApi: LoginApi = retrofit.create(LoginApi::class.java)
 
     // 로그인 요청 메서드
-    fun login(username: String, password: String, callback: (LoginResponse?) -> Unit) {
+    fun login(username: String, password: String, callback: (String?) -> Unit) {
         val loginRequest = LoginRequest(username, password)
 
         // API 호출
         loginApi.login(loginRequest).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
-                    // 성공적인 응답을 받았을 때
-                    callback(response.body())
+                    val responseBody = response.body()
+                    callback(responseBody?.message ?: responseBody?.error)
                 } else {
-                    // 실패한 응답을 받았을 때
-                    callback(null)
+                    callback("Unknown error occurred.")
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                // 네트워크나 다른 오류가 발생했을 때
-                callback(null)
+                callback("Network error: ${t.message}")
             }
         })
     }

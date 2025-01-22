@@ -6,6 +6,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -16,6 +19,7 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
     val loggedInUser by loginViewModel.loggedInUser // ViewModel에서 로그인 상태를 가져옴
 
@@ -64,17 +68,35 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
         // Login Button
         Button(
             onClick = {
-                loginViewModel.login(username.text, password.text) // ViewModel에 로그인 요청
-                if (loggedInUser == null) {
-                    errorMessage = "Invalid username or password. Try again."
+                if (username.text.isEmpty() || password.text.isEmpty()) {
+                    errorMessage = "Username and password cannot be empty."
+                    return@Button
                 }
-                else{
-                    navController.navigate("main") // Navigate to main page
+
+                isLoading = true
+                ApiService.login(username.text, password.text) { message ->
+                    isLoading = false
+                    if (message != null && message.contains("로그인 성공")) {
+                        loginViewModel.setLoggedInUser(username.text)
+                        navController.navigate("main") // 로그인 성공 시 main 페이지로 이동
+                    } else {
+                        errorMessage = message ?: "Unknown error occurred."
+                    }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (isLoading) Modifier.alpha(0.5f) else Modifier) // 로딩 중에는 버튼 비활성화
+                .pointerInput(Unit) {
+                    // isLoading이 true일 때 클릭을 무시
+                    if (isLoading) {
+                        awaitPointerEventScope {
+                            awaitPointerEvent(PointerEventPass.Initial)
+                        }
+                    }
+                }
         ) {
-            Text("Login")
+            Text(if (isLoading) "Logging in..." else "Login")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

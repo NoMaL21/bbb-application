@@ -7,10 +7,8 @@ class LoginViewModel : ViewModel() {
     private val _loggedInUser = mutableStateOf<String?>(null)
     val loggedInUser: State<String?> = _loggedInUser
 
-    // 로그인 처리 함수
-    fun login(username: String, password: String) {
-        if (username == "test" && password == "1234") {
-            _loggedInUser.value = username // 로그인 성공 시 유저 이름 저장
-        }
+    // 로그인 성공 시 loggedInUser 값을 변경하는 함수
+    fun setLoggedInUser(username: String) {
+        _loggedInUser.value = username
     }
 }
