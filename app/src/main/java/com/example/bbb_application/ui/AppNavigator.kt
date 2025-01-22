@@ -1,3 +1,5 @@
+package com.example.bbb_application.ui
+
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -20,14 +22,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.bbb_application.CalendarPage
-import com.example.bbb_application.LoginPage
-import com.example.bbb_application.MainPage
-import com.example.bbb_application.SettingsPage
-import com.example.bbb_application.TaskPage
-import com.example.bbb_application.TeamPage
+import com.example.bbb_application.ui.pages.CalendarPage
+import com.example.bbb_application.ui.pages.LoginPage
+import com.example.bbb_application.ui.pages.MainPage
+import com.example.bbb_application.ui.pages.SettingsPage
+import com.example.bbb_application.ui.pages.TaskPage
+import com.example.bbb_application.ui.pages.TeamPage
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.bbb_application.SignUpPage
+import com.example.bbb_application.ui.pages.SignUpPage
+import com.example.bbb_application.ui.pages.DetailsPage
+import com.example.bbb_application.viewmodel.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -105,7 +109,7 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }
         composable("task") { TaskPage(navController) }
-        composable("settings") { SettingsPage(navController)}
+        composable("settings") { SettingsPage(navController) }
         composable("details/{date}") { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date")
             DetailsPage(date = date)

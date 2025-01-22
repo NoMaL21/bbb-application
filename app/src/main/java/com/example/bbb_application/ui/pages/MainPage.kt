@@ -1,6 +1,6 @@
-package com.example.bbb_application
+package com.example.bbb_application.ui.pages
 
-import LoginViewModel
+import com.example.bbb_application.viewmodel.LoginViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

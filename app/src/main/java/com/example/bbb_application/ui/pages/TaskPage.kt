@@ -1,4 +1,4 @@
-package com.example.bbb_application
+package com.example.bbb_application.ui.pages
 
 import android.annotation.SuppressLint
 import androidx.compose.material3.*
@@ -8,11 +8,12 @@ import androidx.navigation.NavHostController
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsPage(navController: NavHostController) {
+fun TaskPage(navController: NavHostController) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Settings") }) },
+        topBar = { TopAppBar(title = { Text("Task Management") }) },
         content = {
-            Text("Settings Page", style = MaterialTheme.typography.headlineMedium)
+            Text("Task Page", style = MaterialTheme.typography.headlineMedium)
+            Text("")
         }
     )
 }

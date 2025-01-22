@@ -1,14 +1,6 @@
-package com.example.bbb_application
+package com.example.bbb_application.api
 
-import LoginApi
-import LoginRequest
-import LoginResponse
-import SignUpApi
-import SignUpRequest
-import User
-import UserListApi
-import UserListRequest
-import UserListResponse
+import com.example.bbb_application.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

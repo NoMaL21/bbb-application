@@ -1,4 +1,4 @@
-package com.example.bbb_application
+package com.example.bbb_application.ui.pages
 
 import android.os.Build
 import androidx.annotation.RequiresApi

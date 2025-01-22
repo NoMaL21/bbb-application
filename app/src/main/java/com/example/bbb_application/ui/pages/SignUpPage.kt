@@ -1,6 +1,5 @@
-package com.example.bbb_application
+package com.example.bbb_application.ui.pages
 
-import LoginViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -13,15 +12,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bbb_application.api.ApiService
 
 @Composable
-fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) {
+fun SignUpPage(navController: NavHostController) {
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
+    var confirmPassword by remember { mutableStateOf(TextFieldValue("")) }
+    var department by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf(TextFieldValue("")) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var isLoading by remember { mutableStateOf(false) }
-
-    val loggedInUser by loginViewModel.loggedInUser // ViewModel에서 로그인 상태를 가져옴
 
     Column(
         modifier = Modifier
@@ -30,7 +31,7 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Login", style = MaterialTheme.typography.headlineMedium)
+        Text("Sign Up", style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -53,6 +54,35 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
             visualTransformation = PasswordVisualTransformation()
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Confirm Password Field
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirm Password") },
+            modifier = Modifier.fillMaxWidth(),
+            visualTransformation = PasswordVisualTransformation()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = department,
+            onValueChange = { department = it },
+            label = { Text("department") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Error Message
@@ -65,22 +95,27 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Login Button
+        // Sign Up Button
         Button(
             onClick = {
-                if (username.text.isEmpty() || password.text.isEmpty()) {
-                    errorMessage = "Username and password cannot be empty."
+                if (password.text != confirmPassword.text) {
+                    errorMessage = "Passwords do not match"
                     return@Button
                 }
 
                 isLoading = true
-                ApiService.login(username.text, password.text) { message ->
+
+                ApiService.signUp(
+                    username = username.text,
+                    password = password.text,
+                    department = department.text,
+                    name = name.text
+                ) { success ->
                     isLoading = false
-                    if (message != null && message.contains("로그인 성공")) {
-                        loginViewModel.setLoggedInUser(username.text)
-                        navController.navigate("main") // 로그인 성공 시 main 페이지로 이동
+                    if (success) {
+                        navController.navigate("login")
                     } else {
-                        errorMessage = message ?: "Unknown error occurred."
+                        errorMessage = "Failed to sign up. Please try again."
                     }
                 }
             },
@@ -96,21 +131,19 @@ fun LoginPage(navController: NavHostController, loginViewModel: LoginViewModel) 
                     }
                 }
         ) {
-            Text(if (isLoading) "Logging in..." else "Login")
+            Text(if (isLoading) "Signing Up..." else "Sign Up")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Sign Up Button
+        // 이미 계정이 있다면 로그인 페이지로 이동
         TextButton(
             onClick = {
-                navController.navigate("signup") // 회원가입 페이지로 이동
+                navController.navigate("login") // 로그인 페이지로 이동
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Don't have an account? Sign Up", style = MaterialTheme.typography.bodyMedium)
+            Text("Already have an account? Log In", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
-
-

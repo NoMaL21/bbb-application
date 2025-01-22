@@ -1,6 +1,6 @@
-package com.example.bbb_application
+package com.example.bbb_application.ui.pages
 
-import LoginViewModel
+import com.example.bbb_application.viewmodel.LoginViewModel
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.launch
+import com.example.bbb_application.api.ApiService
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)

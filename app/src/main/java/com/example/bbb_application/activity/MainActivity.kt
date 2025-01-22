@@ -1,6 +1,6 @@
-package com.example.bbb_application
+package com.example.bbb_application.activity
 
-import AppScreen
+import com.example.bbb_application.ui.AppScreen
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
