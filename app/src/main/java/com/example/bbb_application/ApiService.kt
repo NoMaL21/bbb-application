@@ -3,6 +3,8 @@ package com.example.bbb_application
 import LoginApi
 import LoginRequest
 import LoginResponse
+import SignUpApi
+import SignUpRequest
 import User
 import UserListApi
 import UserListRequest
@@ -86,5 +88,24 @@ object ApiService {
         })
     }
 
+    private val signUpApi: SignUpApi = retrofit.create(SignUpApi::class.java)
 
+    fun signUp(
+        username: String,
+        password: String,
+        department: String,
+        name: String,
+        callback: (Boolean) -> Unit
+    ) {
+        val request = SignUpRequest(username, password, department, name)
+        signUpApi.signUp(request).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                callback(response.isSuccessful)
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                callback(false)
+            }
+        })
+    }
 }

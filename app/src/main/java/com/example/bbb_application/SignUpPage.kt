@@ -1,10 +1,15 @@
 package com.example.bbb_application
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -15,7 +20,10 @@ fun SignUpPage(navController: NavHostController) {
     var username by remember { mutableStateOf(TextFieldValue("")) }
     var password by remember { mutableStateOf(TextFieldValue("")) }
     var confirmPassword by remember { mutableStateOf(TextFieldValue("")) }
+    var department by remember { mutableStateOf(TextFieldValue("")) }
+    var name by remember { mutableStateOf(TextFieldValue("")) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -60,6 +68,24 @@ fun SignUpPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        OutlinedTextField(
+            value = department,
+            onValueChange = { department = it },
+            label = { Text("department") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        OutlinedTextField(
+            value = name,
+            onValueChange = { name = it },
+            label = { Text("name") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         // Error Message
         if (errorMessage != null) {
             Text(
@@ -75,13 +101,38 @@ fun SignUpPage(navController: NavHostController) {
             onClick = {
                 if (password.text != confirmPassword.text) {
                     errorMessage = "Passwords do not match"
-                } else {
-                    navController.navigate("login") // 회원가입 후 로그인 페이지로 이동
+                    return@Button
+                }
+
+                isLoading = true
+
+                ApiService.signUp(
+                    username = username.text,
+                    password = password.text,
+                    department = department.text,
+                    name = name.text
+                ) { success ->
+                    isLoading = false
+                    if (success) {
+                        navController.navigate("login")
+                    } else {
+                        errorMessage = "Failed to sign up. Please try again."
+                    }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (isLoading) Modifier.alpha(0.5f) else Modifier) // 로딩 중에는 버튼 비활성화
+                .pointerInput(Unit) {
+                    // isLoading이 true일 때 클릭을 무시
+                    if (isLoading) {
+                        awaitPointerEventScope {
+                            awaitPointerEvent(PointerEventPass.Initial)
+                        }
+                    }
+                }
         ) {
-            Text("Sign Up")
+            Text(if (isLoading) "Signing Up..." else "Sign Up")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
