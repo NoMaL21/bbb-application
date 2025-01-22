@@ -6,11 +6,10 @@ data class SignUpRequest(
     val username: String,
     val password: String,
     val department: String,
-    val name: String,
-    val can_login: Boolean = false
+    val name: String
 )
 
 interface SignUpApi {
-    @POST("users/")
+    @POST("register/")
     fun signUp(@Body request: SignUpRequest): Call<Void>
 }
