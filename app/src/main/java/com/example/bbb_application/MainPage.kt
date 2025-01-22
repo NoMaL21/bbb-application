@@ -27,6 +27,7 @@ fun MainPage(navController: NavHostController, loginViewModel: LoginViewModel) {
             text = "Welcome, $loggedInUser!",
             style = MaterialTheme.typography.headlineLarge,
             color = MaterialTheme.colorScheme.primary
+
         )
     }
 }

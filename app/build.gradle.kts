@@ -1,3 +1,14 @@
+import java.util.Properties
+
+val localProperties = Properties()
+val localFile = rootProject.file("local.properties")
+if (localFile.exists()) {
+    localProperties.load(localFile.inputStream())
+}
+val serverIp = localProperties.getProperty("SERVER_IP") ?: "127.0.0.1"
+
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,8 +30,17 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "SERVER_IP", "\"$serverIp\"")
+        }
+        /*getByName("release") {
+            buildConfigField("String", "SERVER_IP", "\"$serverIp\"")
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }*/
         release {
-            isMinifyEnabled = false
+            buildConfigField("String", "SERVER_IP", "\"$serverIp\"")
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -36,11 +56,15 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true  // 추가된 부분
+
     }
 }
 
 dependencies {
-
+    implementation(libs.retrofit)
+    implementation(libs.gson)
+    implementation(libs.okhttp)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
