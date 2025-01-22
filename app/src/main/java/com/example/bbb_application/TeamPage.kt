@@ -31,10 +31,16 @@ fun TeamPage(navController: NavHostController, loginViewModel: LoginViewModel = 
         if (loggedInUser != null) {
             try {
                 Log.d("TeamPage", "Logged in user: $loggedInUser")
-                // 실제 API 호출
-                val response = apiGetTeamMembers(loggedInUser!!)
-                teamMembers = response // API 응답을 teamMembers에 저장
-                Log.d("TeamPage", "Team members: $teamMembers")
+                // ApiService.getUserList() 호출
+                ApiService.getUserList { response ->
+                    if (response != null) {
+                        // 유저 리스트를 받아서 팀 멤버로 설정
+                        teamMembers = response.map { TeamMember(it.username) } // username을 TeamMember에 매핑
+                        Log.d("TeamPage", "Team members: $teamMembers")
+                    } else {
+                        errorMessage = "Failed to load team members"
+                    }
+                }
             } catch (e: Exception) {
                 errorMessage = "Failed to load team members: ${e.message}"
             } finally {
