@@ -3,13 +3,19 @@ package com.example.bbb_application.ui.pages
 import com.example.bbb_application.viewmodel.LoginViewModel
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.bbb_application.api.ApiService
@@ -35,7 +41,7 @@ fun TeamPage(navController: NavHostController, loginViewModel: LoginViewModel = 
                 ApiService.getUserList { response ->
                     if (response != null) {
                         // 유저 리스트를 받아서 팀 멤버로 설정
-                        teamMembers = response.map { TeamMember(it.username) } // username을 TeamMember에 매핑
+                        teamMembers = response.map { TeamMember(it.username, it.department) } // department 추가
                         Log.d("TeamPage", "Team members: $teamMembers")
                     } else {
                         errorMessage = "Failed to load team members"
@@ -53,12 +59,15 @@ fun TeamPage(navController: NavHostController, loginViewModel: LoginViewModel = 
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Team Members") }) },
-        content = {
+        topBar = { TopAppBar(title = { Text("Company Members") }) },
+        content = { paddingValues ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxSize()
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
                 // 로딩 중일 때
                 if (isLoading) {
@@ -70,40 +79,50 @@ fun TeamPage(navController: NavHostController, loginViewModel: LoginViewModel = 
                         Text(it, color = MaterialTheme.colorScheme.error)
                     } ?: run {
                         // 팀 멤버 리스트가 있을 때
-                        TeamMemberList(teamMembers)
+                        DepartmentWiseTeamMemberList(teamMembers, navController)
                     }
                 }
             }
         }
     )
-
 }
 
 @Composable
-fun TeamMemberList(teamMembers: List<TeamMember>) {
-    Column {
-        if (teamMembers.isEmpty()) {
-            Text("No team members found.")
-        } else {
-            teamMembers.forEach { member ->
-                Text(text = "Name: ${member.name}")
-                // 다른 팀 멤버 정보도 표시할 수 있습니다.
+fun DepartmentWiseTeamMemberList(teamMembers: List<TeamMember>, navController: NavHostController) {
+    // department별로 팀 멤버를 그룹화하고 정렬
+    val departmentMap = teamMembers.groupBy { it.department }.toSortedMap()
+
+    LazyColumn {
+        departmentMap.forEach { (department, members) ->
+            item {
+                // 부서 헤더
+                Text(
+                    text = department,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                )
+                // 팀 멤버 리스트
+                members.forEach { member ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp, horizontal = 16.dp)
+                            .clickable { navController.navigate("memberpage/${member.username}")},
+
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text = member.username)
+                    }
+                }
+                HorizontalDivider(thickness = 0.5.dp) // 구분선
             }
         }
     }
 }
 
-// 실제 API 호출 함수 (예시)
-suspend fun apiGetTeamMembers(loggedInUser: String): List<TeamMember> {
-    // 실제 API 호출 코드로 대체 (예시로 팀 멤버 목록 반환)
-    Log.d("TeamPage", "apiGet running, ${loggedInUser}")
-    // 예시로 팀 멤버 목록 반환
-    return listOf(
-        TeamMember(name = "Alice"),
-        TeamMember(name = "Bob"),
-        TeamMember(name = "Charlie")
-    )
-}
 
 // 팀 멤버 데이터 모델
-data class TeamMember(val name: String)
+data class TeamMember(
+    val username: String,
+    val department: String
+)

@@ -76,14 +76,14 @@ fun SignUpPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        OutlinedTextField(
+        /*OutlinedTextField(
             value = name,
             onValueChange = { name = it },
             label = { Text("name") },
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))*/
 
         // Error Message
         if (errorMessage != null) {
