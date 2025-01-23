@@ -145,6 +145,28 @@ object ApiService {
         })
     }
 
-    
+    // AdminApi 인터페이스 구현
+    val adminApi: AdminApi = retrofit.create(AdminApi::class.java)
+
+    // 로그인 요청 메서드
+    fun adminapprove(username: String, callback: (String?) -> Unit) {
+        val adminApproveRequest = AdminApproveRequest(username)
+
+        // API 호출
+        adminApi.adminapprove(adminApproveRequest).enqueue(object : Callback<AdminApproveResponse> {
+            override fun onResponse(call: Call<AdminApproveResponse>, response: Response<AdminApproveResponse>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    callback(responseBody?.message ?: responseBody?.error)
+                } else {
+                    callback("Unknown error occurred.")
+                }
+            }
+
+            override fun onFailure(call: Call<AdminApproveResponse>, t: Throwable) {
+                callback("Network error: ${t.message}")
+            }
+        })
+    }
 
 }

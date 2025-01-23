@@ -36,6 +36,20 @@ fun AdminPage(navController: NavHostController, loginViewModel: LoginViewModel) 
     var users by remember { mutableStateOf<List<User>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var successMessage by remember { mutableStateOf<String?>(null) } // 승인 성공 메시지 상태
+
+    // 데이터 새로 고침 함수
+    val refreshUsers = {
+        isLoading = true
+        ApiService.getUserList { response ->
+            if (response != null) {
+                users = response.map { User(it.username, it.department, it.name, it.password, it.can_login) }
+            } else {
+                errorMessage = "Failed to load team members"
+            }
+            isLoading = false
+        }
+    }
 
     // 로그인된 유저 정보가 있을 때만 API 호출
     LaunchedEffect(loggedInUser) {
@@ -74,6 +88,10 @@ fun AdminPage(navController: NavHostController, loginViewModel: LoginViewModel) 
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
+                // 승인 성공 메시지 표시
+                successMessage?.let {
+                    Text(it, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(bottom = 16.dp))
+                }
                 // 로딩 중일 때
                 if (isLoading) {
                     CircularProgressIndicator()
@@ -84,7 +102,12 @@ fun AdminPage(navController: NavHostController, loginViewModel: LoginViewModel) 
                         Text(it, color = MaterialTheme.colorScheme.error)
                     } ?: run {
                         // 팀 멤버 리스트가 있을 때
-                        WaitingMemberList(users, navController)
+                        WaitingMemberList(
+                            users = users,
+                            navController = navController,
+                            onRefresh = refreshUsers,
+                            onMessage = { successMessage = it }
+                        )
                     }
                 }
             }
@@ -93,51 +116,66 @@ fun AdminPage(navController: NavHostController, loginViewModel: LoginViewModel) 
 }
 
 @Composable
-fun WaitingMemberList(users: List<User>, navController: NavHostController) {
-    // can_login이 false인 유저만 필터링
-    val waitingMembers = users.filter { !it.can_login }
+fun WaitingMemberList(
+    users: List<User>,
+    navController: NavHostController,
+    onRefresh: () -> Unit,
+    onMessage: (String) -> Unit
+    )
+    {
+        // can_login이 false인 유저만 필터링
+        val waitingMembers = users.filter { !it.can_login }
 
-    LazyColumn {
-        itemsIndexed(waitingMembers) { index, member ->  // itemsIndexed로 변경
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = member.username)
-
-                // 승인/거절 버튼
+        LazyColumn {
+            itemsIndexed(waitingMembers) { index, member ->  // itemsIndexed로 변경
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp, horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Button(
-                        onClick = {
-                            // 승인 처리 로직
-                            approveUser(member.username)
-                        },
-                        modifier = Modifier.padding(end = 8.dp)
+                    Text(text = member.username)
+
+                    // 승인/거절 버튼
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Approve")
-                    }
-                    Button(
-                        onClick = {
-                            // 거절 처리 로직
-                            rejectUser(member.username)
+                        Button(
+                            onClick = {
+                                // 승인 처리 로직
+                                approveUser(member.username, onRefresh, onMessage)
+                            },
+                            modifier = Modifier.padding(end = 8.dp)
+                        ) {
+                            Text("Approve")
                         }
-                    ) {
-                        Text("Reject")
+                        Button(
+                            onClick = {
+                                // 거절 처리 로직
+                                rejectUser(member.username)
+                            }
+                        ) {
+                            Text("Reject")
+                        }
                     }
                 }
+                HorizontalDivider(thickness = 0.5.dp) // 구분선
             }
-            HorizontalDivider(thickness = 0.5.dp) // 구분선
         }
-    }
 }
 
-fun approveUser(username: String) {
-
+fun approveUser(username: String, onRefresh: () -> Unit, onMessage: (String) -> Unit) {
+    ApiService.adminapprove(username) { result ->
+        if (result != null) {
+            Log.d("AdminPage", "User $username approved: $result")
+            onMessage("User $username has been approved!")
+            onRefresh() // 목록 새로 고침
+        } else {
+            Log.e("AdminPage", "Failed to approve user $username")
+            onMessage("Failed to approve user $username.")
+        }
+    }
 }
 
 fun rejectUser(username: Any) {
