@@ -98,4 +98,28 @@ object ApiService {
             }
         })
     }
+
+    // UserListApi 인터페이스 구현
+    val taskListApi: TaskListApi = retrofit.create(TaskListApi::class.java)
+
+    // 유저 리스트 요청 메서드
+    fun getTaskListBydate(date: String, callback: (List<Task>?) -> Unit) {
+        // API 호출
+        taskListApi.getTaskListBydate(date).enqueue(object : Callback<List<Task>> {
+            override fun onResponse(call: Call<List<Task>>, response: Response<List<Task>>) {
+                if (response.isSuccessful) {
+                    // 성공적인 응답을 받았을 때
+                    callback(response.body())
+                } else {
+                    // 실패한 응답을 받았을 때
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<List<Task>>, t: Throwable) {
+                // 네트워크나 다른 오류가 발생했을 때
+                callback(null)
+            }
+        })
+    }
 }
