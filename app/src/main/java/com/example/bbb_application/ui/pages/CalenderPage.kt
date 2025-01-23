@@ -49,22 +49,9 @@ fun CalendarPage(navController: NavHostController) {
                     firstDayOfMonth = firstDayOfMonth,
                     today = today,
                     onDateClick = { date ->
-                        selectedDate = date
+                        navController.navigate("details/${date}") // 바로 이동
                     }
                 )
-
-                // Show dialog for selected date
-                if (selectedDate != null) {
-                    val dateToNavigate = selectedDate // 로컬 변수로 값 복사
-                    DetailDialog(
-                        date = dateToNavigate!!,
-                        onDismiss = { selectedDate = null },
-                        onMoreDetails = {
-                            navController.navigate("details/${dateToNavigate}") // 안전하게 전달
-                            selectedDate = null // 값 초기화
-                        }
-                    )
-                }
             }
         }
     )
@@ -130,28 +117,4 @@ fun CalendarGrid(
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun DetailDialog(
-    date: LocalDate,
-    onDismiss: () -> Unit,
-    onMoreDetails: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = { onDismiss() },
-        title = { Text("Details for ${date.format(DateTimeFormatter.ofPattern("MMM d, yyyy"))}") },
-        text = { Text("You can view or edit details for this date.") },
-        confirmButton = {
-            TextButton(onClick = { onMoreDetails() }) {
-                Text("More Details")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onDismiss() }) {
-                Text("Close")
-            }
-        }
-    )
 }

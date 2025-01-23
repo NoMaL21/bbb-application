@@ -109,7 +109,7 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }
         composable("task") { TaskPage(navController) }
-        composable("settings") { SettingsPage(navController) }
+        composable("settings") { SettingsPage(navController, loginViewModel = loginViewModel) }
         composable("details/{date}") { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date")
             DetailsPage(date = date)
