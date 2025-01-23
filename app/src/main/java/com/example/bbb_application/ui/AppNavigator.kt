@@ -111,7 +111,7 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("main") { MainPage(navController, loginViewModel = loginViewModel) }
         composable("calendar") { CalendarPage(navController) }
         composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }
-        composable("task") { TaskPage(navController) }
+        composable("task") { TaskPage(navController, loginViewModel = loginViewModel) }
         composable("settings") { SettingsPage(navController, loginViewModel = loginViewModel) }
         composable("admin") { AdminPage(navController, loginViewModel = loginViewModel) }
         composable("mypage") { MyPage(navController, loginViewModel = loginViewModel) }

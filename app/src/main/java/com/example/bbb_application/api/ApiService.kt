@@ -169,4 +169,15 @@ object ApiService {
         })
     }
 
+    val taskApi: TaskApi = retrofit.create(TaskApi::class.java)
+    // 작업 삭제 API 호출
+    suspend fun deleteTask(taskId: Int): Response<TaskResponse> {
+        return taskApi.deleteTask(taskId)
+    }
+
+    // 작업 수정 API 호출
+    suspend fun updateTask(taskId: Int, taskRequest: TaskRequest): Response<TaskResponse> {
+        return taskApi.updateTask(taskId, taskRequest)
+    }
+
 }
