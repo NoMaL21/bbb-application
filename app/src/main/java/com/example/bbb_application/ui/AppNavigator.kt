@@ -29,9 +29,11 @@ import com.example.bbb_application.ui.pages.SettingsPage
 import com.example.bbb_application.ui.pages.TaskPage
 import com.example.bbb_application.ui.pages.TeamPage
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.bbb_application.ui.pages.AdminPage
 import com.example.bbb_application.ui.pages.SignUpPage
 import com.example.bbb_application.ui.pages.DetailsPage
 import com.example.bbb_application.ui.pages.MemberPage
+import com.example.bbb_application.ui.pages.MyPage
 import com.example.bbb_application.viewmodel.LoginViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -111,6 +113,8 @@ fun AppNavigator(navController: NavHostController, modifier: Modifier = Modifier
         composable("team") { TeamPage(navController, loginViewModel = loginViewModel) }
         composable("task") { TaskPage(navController) }
         composable("settings") { SettingsPage(navController, loginViewModel = loginViewModel) }
+        composable("admin") { AdminPage(navController, loginViewModel = loginViewModel) }
+        composable("mypage") { MyPage(navController, loginViewModel = loginViewModel) }
         composable("details/{date}") { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date")
             DetailsPage(date = date)
