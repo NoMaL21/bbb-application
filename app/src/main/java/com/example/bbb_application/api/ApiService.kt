@@ -102,7 +102,7 @@ object ApiService {
     // taskListApi 인터페이스 구현
     val taskListApi: TaskListApi = retrofit.create(TaskListApi::class.java)
 
-    // 유저 리스트 요청 메서드
+    // task 리스트 요청 메서드
     fun getTaskListBydate(date: String, callback: (List<Task>?) -> Unit) {
         // API 호출
         taskListApi.getTaskListBydate(date).enqueue(object : Callback<List<Task>> {
@@ -144,4 +144,7 @@ object ApiService {
             }
         })
     }
+
+    
+
 }
