@@ -30,15 +30,12 @@ import com.example.bbb_application.api.ApiService
 import com.example.bbb_application.api.ApiService.getTaskListBydate
 import com.example.bbb_application.api.Task
 
-
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsPage(date: String?) {
 
     var tasks by remember { mutableStateOf<List<Task>>(emptyList()) }
-
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 

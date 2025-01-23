@@ -1,5 +1,6 @@
 package com.example.bbb_application.ui.pages
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +22,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.bbb_application.api.ApiService
+import com.example.bbb_application.api.Task
 import com.example.bbb_application.viewmodel.LoginViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -32,14 +36,34 @@ import com.example.bbb_application.viewmodel.LoginViewModel
 @Composable
 fun MyPage(navController: NavHostController, loginViewModel: LoginViewModel) {
     val loggedInUser by loginViewModel.loggedInUser // 로그인 상태 가져오기
+    val username = loggedInUser
+    var tasks by remember { mutableStateOf<List<Task>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
-
-    val tasks = remember { mutableStateOf(emptyList<Map<String, String>>()) }
-
-    // 더미 데이터를 가져오는 로직
-    LaunchedEffect(loggedInUser) {
-        tasks.value = fetchTasksForMember(loggedInUser)
-        println("Loaded tasks: ${tasks.value}") // 첫 번째 값 확인
+    LaunchedEffect(username) {
+        if (username != null) {
+            try {
+                Log.d("myPage", "name : $username")
+                // ApiService.getTaskListByusername() 호출
+                ApiService.getTaskListByusername(username) { response ->
+                    if (response != null) {
+                        // 태스크 리스트
+                        tasks = response.map { Task(it.status_id, it.username, it.current_status, it.status_date, it.status_time) }
+                        // 매핑 구조(순서)에 주의해야 한다
+                    } else {
+                        errorMessage = "Failed to load tasks"
+                    }
+                }
+            } catch (e: Exception) {
+                errorMessage = "Failed to load tasks: ${e.message}"
+            } finally {
+                isLoading = false
+            }
+        } else {
+            errorMessage = "User is not logged in"
+            isLoading = false
+        }
     }
 
     Scaffold(
@@ -55,12 +79,12 @@ fun MyPage(navController: NavHostController, loginViewModel: LoginViewModel) {
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                if (tasks.value.isEmpty()) {
+                if (tasks.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(text = "일정이 없습니다.", style = MaterialTheme.typography.bodyLarge)
+                        Text(text = "$username 은 일정이 없습니다.", style = MaterialTheme.typography.bodyLarge)
                     }
                 } else {
                     LazyColumn(
@@ -87,7 +111,7 @@ fun MyPage(navController: NavHostController, loginViewModel: LoginViewModel) {
                             }
                             HorizontalDivider(thickness = 0.5.dp)
                         }
-                        items(tasks.value) { task ->
+                        items(tasks) { task ->
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -95,12 +119,12 @@ fun MyPage(navController: NavHostController, loginViewModel: LoginViewModel) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
                                 Text(
-                                    text = task["status_date"] ?: "",
+                                    text = task.status_date ?: "",
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.weight(1f)
                                 )
                                 Text(
-                                    text = task["current_status"] ?: "",
+                                    text = task.current_status ?: "",
                                     style = MaterialTheme.typography.bodyLarge,
                                     modifier = Modifier.weight(2f)
                                 )
