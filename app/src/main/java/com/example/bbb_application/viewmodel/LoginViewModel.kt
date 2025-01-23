@@ -13,4 +13,9 @@ class LoginViewModel : ViewModel() {
     fun setLoggedInUser(username: String) {
         _loggedInUser.value = username
     }
+
+    // 로그아웃 메서드
+    fun logout() {
+        _loggedInUser.value = null
+    }
 }

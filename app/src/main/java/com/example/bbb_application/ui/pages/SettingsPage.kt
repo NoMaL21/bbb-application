@@ -47,6 +47,18 @@ fun SettingsPage(navController: NavHostController, loginViewModel: LoginViewMode
                         Text("Admin Page")
                     }
                 }
+
+                Button(
+                    onClick = {
+                        loginViewModel.logout()
+                        navController.navigate("login")
+                              },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("로그아웃")
+                }
+
+                HorizontalDivider(thickness = 0.5.dp)
             }
         }
     )
