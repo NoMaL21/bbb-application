@@ -53,7 +53,7 @@ fun AdminPage(navController: NavHostController, loginViewModel: LoginViewModel) 
 
     // 로그인된 유저 정보가 있을 때만 API 호출
     LaunchedEffect(loggedInUser) {
-        if (loggedInUser == "test") {
+        if (loggedInUser == "admin") {
             try {
                 Log.d("AdminPage", "Logged in user: $loggedInUser")
                 // ApiService.getUserList() 호출

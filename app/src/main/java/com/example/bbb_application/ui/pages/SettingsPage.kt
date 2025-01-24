@@ -39,7 +39,7 @@ fun SettingsPage(navController: NavHostController, loginViewModel: LoginViewMode
                 HorizontalDivider(thickness = 0.5.dp)
 
                 // admin일 때만 보이는 버튼
-                if (loggedInUser == "test") {
+                if (loggedInUser == "admin") {
                     Button(
                         onClick = { navController.navigate("admin") },
                         modifier = Modifier.fillMaxWidth()
